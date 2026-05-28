@@ -1,0 +1,13 @@
+services:
+  sbsm:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: sbsm-cuda-prod
+    working_dir: /workspace
+    gpus: all
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    command: ["python3", "src/cuda_sbsm.py"]
+    restart: unless-stopped

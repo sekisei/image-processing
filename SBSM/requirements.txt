@@ -1,0 +1,7 @@
+numpy
+Pillow
+matplotlib
+numba
+tqdm
+opencv-python-headless
+glob2

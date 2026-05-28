@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.git/
+.gitignore
+.vscode/
+*.ipynb_checkpoints
+data/
+*.npy
