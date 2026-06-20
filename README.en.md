@@ -8,18 +8,18 @@ The implementation lives under the SBSM folder.
 ## Demo Result
 
 Input image used:
-- SBSM/data/input/sample.png
+- readme-images/sample.png
 
 Output image generated:
-- SBSM/data/output/sbsm_gpu.jpg
+- readme-images/sbsm_gpu.jpg
 
 ### Input
 
-![Input sample](SBSM/data/input/sample.png)
+![Input sample](readme-images/sample.png)
 
 ### Output
 
-![Output sbsm_gpu](SBSM/data/output/sbsm_gpu.jpg)
+![Output sbsm_gpu](readme-images/sbsm_gpu.jpg)
 
 ### What to look at
 

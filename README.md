@@ -8,18 +8,18 @@ SBSM (Statistical Background Subtraction Model) を CUDA で実行するサン�
 ## デモ結果
 
 使用した入力画像:
-- SBSM/data/input/sample.png
+- readme-images/sample.png
 
 生成された出力画像:
-- SBSM/data/output/sbsm_gpu.jpg
+- readme-images/sbsm_gpu.jpg
 
 ### 入力画像
 
-![Input sample](SBSM/data/input/sample.png)
+![Input sample](readme-images/sample.png)
 
 ### 出力画像
 
-![Output sbsm_gpu](SBSM/data/output/sbsm_gpu.jpg)
+![Output sbsm_gpu](readme-images/sbsm_gpu.jpg)
 
 ### 見どころ
 
