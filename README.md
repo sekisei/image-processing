@@ -1,126 +1,80 @@
-# SBSM (CUDA)
+# image-processing / SBSM
 
-SBSM を CUDA + Docker Compose で実行するための最小構成です。
+[English README](README.en.md)
 
-## 概要
+SBSM (Statistical Background Subtraction Model) を CUDA で実行するサンプルです。
+実装本体は SBSM フォルダ配下にあります。
 
-- 実行スクリプト: src/cuda_sbsm.py
-- 入力画像の既定値: data/input/IMAG1138.jpg
-- 出力画像の既定値: data/output/sbsm_gpu.jpg
-- ヒストグラム入力の既定値: data/hist_xy.npy
+## デモ結果
 
-実行時のパスは環境変数で上書きできます。
+使用した入力画像:
+- SBSM/data/input/sample.png
 
-- SBSM_HIST_PATH
-- SBSM_INPUT_IMAGE
-- SBSM_OUTPUT_IMAGE
+生成された出力画像:
+- SBSM/data/output/sbsm_gpu.jpg
 
-## ディレクトリ構成
+### 入力画像
 
-- .dockerignore
-- Dockerfile.dev
-- Dockerfile.prod
-- docker-compose.dev.yml
-- docker-compose.prod.yml
-- requirements.txt
-- src/
-  - cuda_sbsm.py
-- data/
-  - input/
-  - output/
+![Input sample](SBSM/data/input/sample.png)
 
-## 前提条件
+### 出力画像
 
-- Docker Engine
-- Docker Compose v2
-- NVIDIA Driver
-- NVIDIA Container Toolkit
+![Output sbsm_gpu](SBSM/data/output/sbsm_gpu.jpg)
 
-GPU を使うため、ホスト側で NVIDIA ランタイムが有効である必要があります。
+### 見どころ
 
-## 開発用 (dev)
+- 赤色オーバーレイが前景候補の画素です。
+- 背景として扱われる領域は元画像に近い見た目のまま残ります。
+- ノイズが多い夜間シーンでも、変化領域を強調できることが確認できます。
 
-特徴:
+## 主要ファイル
 
-- ソースを共有マウント (.:/workspace)
-- ローカル編集をコンテナへ即時反映
+- メインスクリプト: SBSM/src/cuda_sbsm.py
+- 入力画像: SBSM/data/input/
+- 出力画像: SBSM/data/output/
+- 背景ヒストグラム: SBSM/data/hist_xy.npy
 
-実行:
+## 実行方法 (Podman Compose)
 
-1. ディレクトリ移動
-   cd /home/manager/workspace/image-processing/SBSM
-2. ビルドして起動
-   docker compose -f docker-compose.dev.yml up --build
+1. SBSM ディレクトリへ移動
 
-## 本番想定 (prod)
+```bash
+cd SBSM
+```
 
-特徴:
+2. 開発用コンテナをビルド
 
-- 共有マウントなし
-- イメージ内のソースで実行
-- restart: unless-stopped
+```bash
+podman-compose -f docker-compose.dev.yml build
+```
 
-実行:
+3. 対話実行
 
-1. ディレクトリ移動
-   cd /home/manager/workspace/image-processing/SBSM
-2. ビルドしてデタッチ起動
-   docker compose -f docker-compose.prod.yml up --build -d
+```bash
+podman-compose -f docker-compose.dev.yml run --rm sbsm bash
+python3 src/cuda_sbsm.py
+```
 
-停止:
+本番風に一発実行する場合:
 
-- dev: docker compose -f docker-compose.dev.yml down
-- prod: docker compose -f docker-compose.prod.yml down
+```bash
+podman-compose -f docker-compose.prod.yml up --build
+```
 
-## 入出力ファイル
+## GPU 確認
 
-- 入力画像: data/input/IMAG1138.jpg
-- 出力画像: data/output/sbsm_gpu.jpg
-- ヒストグラム: data/hist_xy.npy
+SBSM 配下で次を実行:
 
-注意:
+```bash
+podman-compose -f docker-compose.dev.yml run --rm sbsm bash -lc "nvidia-smi -L && python3 -c 'from numba import cuda; print(cuda.is_available())'"
+```
 
-- data/hist_xy.npy が存在しない場合、実行時に読み込みエラーになります。
-- 別ファイルを使う場合は Compose の environment を変更してください。
-
-## 数理モデル (統計学的背景差分法)
-
-この実装は、各画素の観測輝度 I に対して背景/前景の 2 クラスをベイズ判定します。
-
-- 背景クラス: w0
-- 前景クラス: w1
-- 事前確率: P(w0)=0.9, P(w1)=0.1
-
-背景尤度は画素ごとのヒストグラムから与えます。
-
-- P(I|w0) = hist[x,y,I(x,y)] / hist_sum
-
-前景尤度は一様分布で近似します。
-
-- P(I|w1) = 1/255
-
-観測 I の確率は以下です。
-
-- P(I) = P(w0)P(I|w0) + P(w1)P(I|w1)
-
-事後確率はベイズの定理で求めます。
-
-- P(wk|I) = P(I|wk)P(wk)/P(I), k in {0,1}
-
-判定条件は次の通りです。
-
-- 前景 if P(w1|I) > P(w0|I)
-
-この条件を満たす画素を前景として扱い、出力画像では赤色でマーキングします。
+期待値:
+- nvidia-smi -L で GPU 名が表示される
+- cuda.is_available() が True になる
 
 ## 補足
 
-### Dockerfile の使い分け
+- cuda_sbsm.py は既定で SBSM/data/hist_xy.npy を読み込みます。
+- 背景フレームからヒストグラムを再生成するコードはファイル内にありますが、現状コメントアウトされています。
 
-- **Dockerfile.dev**  
-  開発環境用。COPY は requirements.txt のみ。ソースは共有マウント（volumes）で提供される。  
-  ホスト側ファイルの変更がコンテナへ即座に反映される。
-
-- **Dockerfile.prod**  
-  本番実行用。COPY . /workspace ですべてのソースをイメージ内に焼き込む。  
-  再現性を重視し、ホストファイルへの依存がない。
