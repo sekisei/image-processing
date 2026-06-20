@@ -1,9 +1,9 @@
-# image-processing / SBSM
+# image-processing / sbsm
 
 [English README](README.en.md)
 
 SBSM (Statistical Background Subtraction Model) を CUDA で実行するサンプルです。
-実装本体は SBSM フォルダ配下にあります。
+実装本体は sbsm フォルダ配下にあります。
 
 ## デモ結果
 
@@ -29,17 +29,17 @@ SBSM (Statistical Background Subtraction Model) を CUDA で実行するサン�
 
 ## 主要ファイル
 
-- メインスクリプト: SBSM/src/cuda_sbsm.py
-- 入力画像: SBSM/data/input/
-- 出力画像: SBSM/data/output/
-- 背景ヒストグラム: SBSM/data/hist_xy.npy
+- メインスクリプト: sbsm/src/cuda_sbsm.py
+- 入力画像: sbsm/data/input/
+- 出力画像: sbsm/data/output/
+- 背景ヒストグラム: sbsm/data/hist_xy.npy
 
 ## 実行方法 (Podman Compose)
 
-1. SBSM ディレクトリへ移動
+1. sbsm ディレクトリへ移動
 
 ```bash
-cd SBSM
+cd sbsm
 ```
 
 2. 開発用コンテナをビルド
@@ -55,15 +55,9 @@ podman-compose -f docker-compose.dev.yml run --rm sbsm bash
 python3 src/cuda_sbsm.py
 ```
 
-本番風に一発実行する場合:
-
-```bash
-podman-compose -f docker-compose.prod.yml up --build
-```
-
 ## GPU 確認
 
-SBSM 配下で次を実行:
+sbsm 配下で次を実行:
 
 ```bash
 podman-compose -f docker-compose.dev.yml run --rm sbsm bash -lc "nvidia-smi -L && python3 -c 'from numba import cuda; print(cuda.is_available())'"
@@ -75,6 +69,6 @@ podman-compose -f docker-compose.dev.yml run --rm sbsm bash -lc "nvidia-smi -L &
 
 ## 補足
 
-- cuda_sbsm.py は既定で SBSM/data/hist_xy.npy を読み込みます。
+- cuda_sbsm.py は既定で sbsm/data/hist_xy.npy を読み込みます。
 - 背景フレームからヒストグラムを再生成するコードはファイル内にありますが、現状コメントアウトされています。
 

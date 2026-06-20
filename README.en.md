@@ -1,9 +1,9 @@
-# image-processing / SBSM
+# image-processing / sbsm
 
 [日本語README](README.md)
 
 This project runs SBSM (Statistical Background Subtraction Model) on CUDA.
-The implementation lives under the SBSM folder.
+The implementation lives under the sbsm folder.
 
 ## Demo Result
 
@@ -29,17 +29,17 @@ Output image generated:
 
 ## Key Files
 
-- Main script: SBSM/src/cuda_sbsm.py
-- Input images: SBSM/data/input/
-- Output images: SBSM/data/output/
-- Background histogram: SBSM/data/hist_xy.npy
+- Main script: sbsm/src/cuda_sbsm.py
+- Input images: sbsm/data/input/
+- Output images: sbsm/data/output/
+- Background histogram: sbsm/data/hist_xy.npy
 
 ## Run (Podman Compose)
 
-1. Move into SBSM directory
+1. Move into sbsm directory
 
 ```bash
-cd SBSM
+cd sbsm
 ```
 
 2. Build dev container
@@ -55,15 +55,9 @@ podman-compose -f docker-compose.dev.yml run --rm sbsm bash
 python3 src/cuda_sbsm.py
 ```
 
-For one-shot production-style run:
-
-```bash
-podman-compose -f docker-compose.prod.yml up --build
-```
-
 ## GPU Check
 
-Run this under SBSM:
+Run this under sbsm:
 
 ```bash
 podman-compose -f docker-compose.dev.yml run --rm sbsm bash -lc "nvidia-smi -L && python3 -c 'from numba import cuda; print(cuda.is_available())'"
@@ -75,5 +69,5 @@ Expected:
 
 ## Notes
 
-- cuda_sbsm.py currently loads SBSM/data/hist_xy.npy by default.
+- cuda_sbsm.py currently loads sbsm/data/hist_xy.npy by default.
 - Histogram generation from background frames is present in code but currently commented out.
