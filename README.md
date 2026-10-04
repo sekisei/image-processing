@@ -39,7 +39,7 @@ SBSM (Statistical Background Subtraction Model) を CUDA で実行するサン�
 
 $$
 P(I\mid w_0) = \prod_{c\in\{R,G,B\}}
-\frac{\operatorname{hist}[x,y,c,I_c]}{\operatorname{hist\_sum}[x,y,c]}
+\frac{\mathrm{hist}[x,y,c,I_c]}{\mathrm{hist\_sum}[x,y,c]}
 $$
 
 前景尤度は、各チャンネルの8ビット値（0〜255）が一様に現れると近似します。
